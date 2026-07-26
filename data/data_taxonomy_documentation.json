@@ -1,0 +1,98 @@
+{
+  "description": "Behavioral Anomaly Detection — Data Taxonomy & Assumptions Document",
+  "generation_params": {
+    "total_entities": 469,
+    "total_logs": 21253,
+    "time_window_days": 14,
+    "start_date": "2026-07-10T00:00:00",
+    "end_date": "2026-07-24T00:00:00",
+    "anomaly_rate_target": "3-5 %",
+    "anomaly_rate_actual": "2.9 %",
+    "cold_start_entities": 24,
+    "cold_start_pct": "5.1 %",
+    "label_distribution": {
+      "normal": 20643,
+      "brute_force": 120,
+      "lateral_movement": 98,
+      "credential_stuffing": 85,
+      "device_spoofing": 80,
+      "impossible_travel": 80,
+      "low_and_slow_exfil": 74,
+      "insider_drift": 73
+    }
+  },
+  "schema": {
+    "entity_id": "Unique identifier (USR_XXX, SVC_XXX, EDG_XXX)",
+    "entity_type": "Category: user | service_account | edge_device",
+    "timestamp": "ISO-8601 datetime of the access event",
+    "source_ip": "IPv4 address of the originating client",
+    "geo_location": "City, Country-code of the source IP",
+    "resource_accessed": "API endpoint or file path accessed",
+    "auth_method": "Authentication type: password | mfa | sso | api_key | certificate",
+    "session_duration": "Session length in minutes (0.0 = failed/rejected)",
+    "command_sequence": "JSON array of commands executed during session",
+    "device_fingerprint": "OS/MAC address string identifying the device",
+    "label": "Ground-truth class: 'normal' or attack taxonomy label"
+  },
+  "anomaly_taxonomy": {
+    "brute_force": {
+      "description": "Rapid repeated authentication attempts (8-20 within seconds)",
+      "indicators": [
+        "High failed_auth_count_5m",
+        "session_duration == 0",
+        "Targets /api/v1/auth/tokens"
+      ]
+    },
+    "impossible_travel": {
+      "description": "Logins from geographically distant locations within impossibly short timeframes",
+      "indicators": [
+        "geo_velocity_kmh > 1000",
+        "Location change > 1000 km in < 30 min"
+      ]
+    },
+    "credential_stuffing": {
+      "description": "Multiple different accounts accessed from a single IP in rapid succession",
+      "indicators": [
+        "Same source_ip across many entity_ids",
+        "Auth endpoint targeting",
+        "session_duration == 0"
+      ]
+    },
+    "lateral_movement": {
+      "description": "Sequential access to multiple sensitive resources atypical for the entity",
+      "indicators": [
+        "High resource_rarity_score",
+        "Sensitive-resource hopping",
+        "Short session durations"
+      ]
+    },
+    "device_spoofing": {
+      "description": "Access from a device fingerprint inconsistent with the entity's established baseline",
+      "indicators": [
+        "fingerprint_mismatch_flag == 1",
+        "Changed OS/MAC combination"
+      ]
+    },
+    "low_and_slow_exfil": {
+      "description": "Small, periodic data exports during off-hours over multiple days",
+      "indicators": [
+        "Off-hours access (01:00-04:00)",
+        "Data-export endpoint targeting",
+        "Multi-day recurrence pattern"
+      ]
+    },
+    "insider_drift": {
+      "description": "Gradual escalation to sensitive resources outside the entity's normal access pattern",
+      "indicators": [
+        "Increasing resource_rarity_score over time",
+        "Access to HR / admin / secrets endpoints"
+      ]
+    }
+  },
+  "behavioral_assumptions": {
+    "users": "Work during defined hours (07-20 h), access 3-6 habitual resources, operate from 1-2 geo locations",
+    "service_accounts": "Operate 24/7 from fixed data-center locations, authenticate via api_key or certificate",
+    "edge_devices": "Operate 24/7 from a single location, access a limited resource set, use certificate auth",
+    "cold_start": "Brand-new entity IDs with 1-3 days of history; no established behavioral baseline for comparison"
+  }
+}

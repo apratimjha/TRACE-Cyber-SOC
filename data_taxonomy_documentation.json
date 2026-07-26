@@ -1,0 +1,28 @@
+{
+  "taxonomy": [
+    {
+      "category": "brute_force",
+      "description": "Repeated, rapid failed authentication attempts from a single or distributed sources targeting one or more entities.",
+      "features_impacted": ["failed_logins_1h", "auth_method"]
+    },
+    {
+      "category": "lateral_movement",
+      "description": "An authenticated entity attempting to access an unusual sequence of high-privilege resources across the network.",
+      "features_impacted": ["resource_accessed", "command_sequence", "geo_velocity"]
+    },
+    {
+      "category": "device_spoofing",
+      "description": "Access attempts from an entity utilizing a significantly altered or previously unseen device fingerprint.",
+      "features_impacted": ["device_fingerprint", "source_ip"]
+    },
+    {
+      "category": "impossible_travel",
+      "description": "Geographical access points that are physically impossible to traverse within the recorded timeframe.",
+      "features_impacted": ["geo_location", "geo_velocity", "source_ip"]
+    }
+  ],
+  "behavioral_assumptions": {
+    "normal": "Entities operate within predictable working hours, originating from standard geographical regions, interacting with a steady subset of resources.",
+    "anomalous": "Deviations in volume, velocity, sequence of commands, or geospatial attributes indicate compromised credentials or insider threats."
+  }
+}
