@@ -107,7 +107,7 @@ making future scaling straightforward.
 
 <p align="center">
 
-<img src="assets/architecture-diagram.png" width="900">
+<img src="assets/architecture.png" width="900">
 
 </p>
 
@@ -119,7 +119,7 @@ making future scaling straightforward.
 
 <p align="center">
 
-<img src="assets/dashboard-overview.png" width="900">
+<img src="assets/dashboard.png" width="900">
 
 </p>
 
@@ -139,7 +139,7 @@ making future scaling straightforward.
 
 <p align="center">
 
-<img src="assets/incident-analysis-dashboard.png" width="900">
+<img src="assets/shap-explanation-dashboard.png" width="900">
 
 </p>
 
